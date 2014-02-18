@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 class Client {
+	
 	String nom;
 
 	Socket clientSocket = null;

@@ -21,14 +21,10 @@ class Serveur {
 		taches = new ArrayList<Taches>();
 
 		try {
-			
-			socket = new ServerSocket(9921);
-			
+			socket = new ServerSocket(9921);			
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 			System.exit(1);
-			
 		}
 		
 	}
@@ -40,20 +36,13 @@ class Serveur {
 		while (true) {
 			
 			try {
-				
 				unClient = socket.accept();
-				
 			} catch (IOException e) {
-				
 				e.printStackTrace();
 				System.exit(1);
-				
 			}
-
 			realiseService(unClient);
-			
 		}
-		
 	}
 
 	private void realiseService(Socket unClient) {
@@ -62,7 +51,6 @@ class Serveur {
 		BufferedReader reception = null;
 
 		try {
-			
 			envoi = new PrintWriter(unClient.getOutputStream(), true);
 			reception = new BufferedReader(
                     new InputStreamReader(unClient.getInputStream()));
@@ -74,50 +62,42 @@ class Serveur {
 				demande = reception.readLine();
 				
 				if(demande.equals("Lister")) {
-					
-					envoi.println( lister() );
-					
+					envoi.println(lister());
+				} else if(demande.equals("ListerLibres")) {
+					envoi.println(listerLibres());
+				} else if(demande.equals("ListerAffectees")) {
+					envoi.println(listerAffectees());
+				} else if(demande.equals("ListerEffectuees")) {
+					envoi.println(listerEffectuees());
 				} else if(demande.equals("Ajouter")) {
-					
 					envoi.println( 	
 						((ajouter(reception))
 						?"L'ajout de la tâche s'est bien déroulée.\nSTOP"
 						:"Une erreur s'est produite lors de l'ajout d'une tâche.\nSTOP")
 					);
-					
 				} else if(demande.equals("Affecter")) {
-					
 					envoi.println( 	
 						((affecter(reception))
 						?"L'affectation de la tâche s'est bien faite.\nSTOP"
 						:"Une erreur s'est produite lors de l'affectation de la tâche.\nSTOP")
 					);
-					
 				} else if(demande.equals("Terminer")) {
-					
 					envoi.println( 	
 						((terminer(reception))
 						?"La Modification de la tâche s'est bien faite.\nLa tâche est désormais terminée.\nSTOP"
 						:"Une erreur s'est produite dans la modification de la tâche.\nSTOP")
 					);
-					
 				} else if(demande.equals("Supprimer")) {
-					
 					envoi.println( 	
 						((supprimer(reception))
 						?"La suppresion de la tâche a bien été faite.\nSTOP"
 						:"Une erreur s'est produite lors de la suppression de la tâche.\nSTOP")
 					);
-					
 				}
-				
 			}
-
 		} catch (IOException e) {
-			
 			e.printStackTrace();
 			System.exit(1);
-			
 		}
 	}
 
@@ -126,7 +106,7 @@ class Serveur {
 		String reponse = "";
 		
 		for(int i=0; i<taches.size(); i++) {
-			reponse += i + ": \n";
+			reponse += "ID : "+ i + " \n";
 			reponse += taches.get(i).toString() + "\n";
 			reponse += "\n====================\n\n";
 		}
@@ -134,122 +114,152 @@ class Serveur {
 		if(reponse.length() > 0) {
 			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
 		} else {
-			reponse = "Aucune tâche pour le moment.\n";
+			reponse = "Pas encore de tâche.\n";
 		} 
 		
 		reponse += "STOP";
 		return reponse;
 		
 	}
+	
+	private String listerLibres() { 
+		
+		String reponse = "";
+		
+		for(int i=0; i<taches.size(); i++) {
+			if(taches.get(i).statut() == "Libre"){			
+				reponse += "ID : "+ i + " \n";
+				reponse += taches.get(i).toString() + "\n";
+				reponse += "\n====================\n\n";
+			}
+		}
+		
+		if(reponse.length() > 0) {
+			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
+		} else {
+			reponse = "Pas encore de tâche.\n";
+		} 
+		
+		reponse += "STOP";
+		return reponse;
+	}
+	
+	private String listerAffectees() { 
+		
+		String reponse = "";
+		
+		for(int i=0; i<taches.size(); i++) {
+			if(taches.get(i).statut() == "Affectée"){			
+				reponse += "ID : "+ i + " \n";
+				reponse += taches.get(i).toString() + "\n";
+				reponse += "\n====================\n\n";
+			}
+		}
+		
+		if(reponse.length() > 0) {
+			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
+		} else {
+			reponse = "Pas encore de tâche.\n";
+		} 
+		
+		reponse += "STOP";
+		return reponse;
+	}
+	
+	private String listerEffectuees() { 
+		String reponse = "";
+		
+		for(int i=0; i<taches.size(); i++) {
+			if(taches.get(i).statut() == "Réalisée"){			
+				reponse += "ID : "+ i + " \n";
+				reponse += taches.get(i).toString() + "\n";
+				reponse += "\n====================\n\n";
+			}
+		}
+		
+		if(reponse.length() > 0) {
+			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
+		} else {
+			reponse = "Pas encore de tâche.\n";
+		} 
+		
+		reponse += "STOP";
+		return reponse;
+	}
 
-	private boolean ajouter(BufferedReader reception)
-	{
+	private boolean ajouter(BufferedReader reception) {
 		String libelle, auteur;
 
 		try {
-			
 			auteur = reception.readLine();
 			libelle = reception.readLine();
-			
 		} catch( Exception e ) {
-			
 			return false;
-			
 		}
 
 		Taches t = new Taches(libelle, auteur);
 
 		try {
-			
 			taches.add(t);
 			Collections.sort(taches);
 			return true;
-			
 		} catch( Exception e ) {
-			
 			return false;
-			
 		}
 		
 	}
 
 	private boolean affecter(BufferedReader reception) {
-		
 		int id;
 		String affecte;
 
 		try {
-			
 			id = Integer.parseInt(reception.readLine());
 			affecte = reception.readLine();
-			
 		} catch( Exception e ) {
-			
 			return false;
 		}
 
 		try {
-			
 			taches.get(id).affecter(affecte);
 			return true;
-			
 		} catch( Exception e ) {
-			
 			return false;
-			
 		}
 	}
 
 	private boolean terminer(BufferedReader reception) {
-		
 		int id;
 
 		try {
-			
 			id = Integer.parseInt(reception.readLine());
-			
 		} catch( Exception e ) {
-			
 			return false;
-			
 		}
 
 		try {
-			
-			taches.get(id).finir();
+			taches.get(id).realiser();
 			return true;
-			
 		} catch( Exception e ) {
-			
 			return false;
-			
 		}
 	}
 
 	private boolean supprimer(BufferedReader reception)	{
-		
 		int id;
 		
 		try {
-			
 			id = Integer.parseInt(reception.readLine());
-			
 		} catch( Exception e ) {
-			
 			return false;
-		}
-
-		try {
-			
-			taches.remove(id);
-			return true;
-			
-		} catch( Exception e ) {
-			
-			return false;
-			
 		}
 		
+		try {
+			taches.remove(id);
+			return true;
+		} catch( Exception e ) {
+			return false;
+		}
 	}
 	
 }

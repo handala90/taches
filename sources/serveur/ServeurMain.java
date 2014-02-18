@@ -1,3 +1,8 @@
+/**
+ * Classe Main du serveur
+ * Instanciation d'un serveur pour le mettre ensuite en service
+ */
+
 package serveur;
 
 class ServeurMain {
