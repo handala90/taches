@@ -1,7 +1,11 @@
 /**
  * Classe des tâches
- * La classe permettra d'avoir les getters et setters pour chaques tâches
- * soit pour déterminer le libellé, l'auteur, le statut et l'affectation
+ * Getters et setters pour chaques tâches
+ * Déterminer et d'assigner :
+ * 		-> le libellé
+ * 		-> l'auteur
+ * 		-> le statut 
+ *		-> l'affectation
  */
 
 package taches;
@@ -68,7 +72,8 @@ public class Taches implements Comparable<Taches> {
 	}
 
 	/**
-	 * Setter realiser
+	 * Méthode realiser
+	 * Permet de passer le statut d'une tâche à "réalisée"
 	 * Statut => rélisée
 	 * affecter => null
 	 */
@@ -77,11 +82,11 @@ public class Taches implements Comparable<Taches> {
 		affecter = null;
 	}
 
-	/**
+	/** 
 	 * @return int
 	 */
 	public int compareTo(Taches t) { 
-		return libelle.compareTo(t.libelle());
+		return 0;
 	}
 	
 	/**

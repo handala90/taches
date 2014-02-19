@@ -1,3 +1,9 @@
+/**
+ * Classe Serveur
+ * Permet de créer l'instanciation du serveur en créant une socket qui sera réservé à un cliant
+ * Permet également de mettre en serveur le serveur
+ * et de traiter les demandes que le serveur reçoit
+ */
 package serveur;
 
 import java.util.Collections;
@@ -16,6 +22,11 @@ class Serveur {
 	private ServerSocket socket;
 	private ArrayList<Taches> taches;
 
+	/**
+	 * Construction de la classe serveur
+	 * Création d'une ArrayListe pour les tâches
+	 * Création d'une socket sur le port 9921
+	 */
 	public Serveur() {
 		
 		taches = new ArrayList<Taches>();
@@ -29,6 +40,12 @@ class Serveur {
 		
 	}
 
+	/**
+	 * Méthode miseEnService
+	 * Cette méthode "ouvre" la socket pour accepter un client.
+	 * Si celui-ci est accepté par un client,
+	 * il pourra commencé les opérations que le client souhaite faire => realiseService
+	 */
 	public void miseEnService() {
 		
 		Socket unClient = null;
@@ -45,7 +62,31 @@ class Serveur {
 		}
 	}
 
-	private void realiseService(Socket unClient) {
+	/**
+	 * Méthode realiseService
+	 * @param Socket Client
+	 * A partir du moment où il y a un client
+	 * Nous allons créer deux variables : 
+	 *  - envoie : permettra d'envoyer les résultats des demandes du client
+	 *  - reception : permettra de lire les ordres du client
+	 *  
+	 * Tant que l'on ne reçoit pas l'ordre d'arrêter par "STOP" on lit chaque ligne envoyée
+	 * Si le client envoie :
+	 * 		- "Lister"			 : On liste toutes les tâches
+	 * 		- "ListerLibres"	 : On liste toutes les tâches libres
+	 * 		- "ListerAffectees"	 : On liste toutes les tâches affectées
+	 * 		- "ListerEffectuees" : On liste toutes les tâches Effectuées/Réalisées
+	 * 		- "Ajouter"			 : On appelle la fonction "Ajouter", pour ajouter une tâche et on retourne 
+	 * 							   un message en fonction de la réussite ou de l'échec de la méthode
+	 * 		- "Affecter"		 : On appelle la fonction "Affecter" pour affecter une tâche à une personne 
+	 * 							   et on retourne un message en fonction de la réussite ou de l'échec de la méthode
+	 * 		- "Terminer"		 : On appelle la fonction "Terminer" pour rendre une tâche réalisée/terminée
+	 * 							   et on retourne un message en fonction de la réussite ou de l'échec de la méthode
+	 * 		- "Supprimer"		 : On appelle la fonction "Supprimer" pour supprimer une tâche 
+	 * 							   et on retourne un message en fonction de la réussite ou de l'échec de la méthode
+	 * 
+	 */
+	public void realiseService(Socket unClient) {
 		
 		PrintWriter envoi = null;
 		BufferedReader reception = null;
@@ -83,7 +124,7 @@ class Serveur {
 					);
 				} else if(demande.equals("Terminer")) {
 					envoi.println( 	
-						((terminer(reception))
+						((realiser(reception))
 						?"La Modification de la tâche s'est bien faite.\nLa tâche est désormais terminée.\nSTOP"
 						:"Une erreur s'est produite dans la modification de la tâche.\nSTOP")
 					);
@@ -94,13 +135,17 @@ class Serveur {
 						:"Une erreur s'est produite lors de la suppression de la tâche.\nSTOP")
 					);
 				}
-			}
+			}			 
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
+	/**
+	 * Méthode String Lister
+	 * @return la liste de toutes les tâches
+	 */
 	private String lister()	{
 		
 		String reponse = "";
@@ -114,7 +159,7 @@ class Serveur {
 		if(reponse.length() > 0) {
 			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
 		} else {
-			reponse = "Pas encore de tâche.\n";
+			reponse = "Aucune tâche disponible.\n";
 		} 
 		
 		reponse += "STOP";
@@ -122,6 +167,11 @@ class Serveur {
 		
 	}
 	
+	/**
+	 * Méthode String ListerLibres
+	 * On regarde toutes les taches et on récupère que celles où leur statut est "Libres"
+	 * @return la liste des tâches dont le statut est "Libres"
+	 */
 	private String listerLibres() { 
 		
 		String reponse = "";
@@ -144,6 +194,11 @@ class Serveur {
 		return reponse;
 	}
 	
+	/**
+	 * Méthode String ListerAffectees
+	 * On regarde toutes les taches et on récupère que celles où leur statut est "Affectees"
+	 * @return la liste des tâches dont le statut est "Affectees"
+	 */
 	private String listerAffectees() { 
 		
 		String reponse = "";
@@ -159,13 +214,18 @@ class Serveur {
 		if(reponse.length() > 0) {
 			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
 		} else {
-			reponse = "Pas encore de tâche.\n";
+			reponse = "Pas encore de tâche affectée.\n";
 		} 
 		
 		reponse += "STOP";
 		return reponse;
 	}
 	
+	/**
+	 * Méthode String ListerEffectuees
+	 * On regarde toutes les taches et on récupère que celles où leur statut est "Realisee"
+	 * @return la liste des tâches dont le statut est "Realisee"
+	 */
 	private String listerEffectuees() { 
 		String reponse = "";
 		
@@ -180,13 +240,21 @@ class Serveur {
 		if(reponse.length() > 0) {
 			reponse = "\n" + reponse.substring(0, reponse.length() - 22);
 		} else {
-			reponse = "Pas encore de tâche.\n";
+			reponse = "Pas encore de tâche réalisée.\n";
 		} 
 		
 		reponse += "STOP";
 		return reponse;
 	}
-
+	
+	/**
+	 * Méthode booléene Ajouter
+	 * @param BufferReader reception
+	 * Le première ligne que l'on recevra correspondra à l'auteur
+	 * Le seconde ligne correspondra au libellé de la tâche
+	 * Suite à ça on ajoute la tâche à l'arrayList tache
+	 * @return vrai si tout c'est bien passé, faux sinon
+	 */
 	private boolean ajouter(BufferedReader reception) {
 		String libelle, auteur;
 
@@ -208,7 +276,16 @@ class Serveur {
 		}
 		
 	}
-
+	
+	/**
+	 * Méthode booléene Terminer
+	 * @param BufferReader reception
+	 * On recoit un message qui correspond à l'identifiant d'une tache
+	 * On va allé à l'index, étant l'identifiant entré, dans l'arrayList
+	 * des tâches pour appelé la méthode "affecter" de la classe Taches.
+	 * Grâce à cela, la tâche sera passé en "Affectée"
+	 * @return vrai si tout c'est bien passé, faux sinon
+	 */
 	private boolean affecter(BufferedReader reception) {
 		int id;
 		String affecte;
@@ -228,7 +305,16 @@ class Serveur {
 		}
 	}
 
-	private boolean terminer(BufferedReader reception) {
+	/**
+	 * Méthode booléene Terminer
+	 * @param BufferReader reception
+	 * On recoit un message qui correspond à l'identifiant d'une tache
+	 * On va allé à l'index, étant l'identifiant entré, dans l'arrayList
+	 * des tâches pour appelé la méthode "réaliser" de la classe Taches.
+	 * Grâce à cela, la tâche sera passé en "Réalisée"
+	 * @return vrai si tout c'est bien passé, faux sinon
+	 */
+	private boolean realiser(BufferedReader reception) {
 		int id;
 
 		try {
@@ -245,6 +331,14 @@ class Serveur {
 		}
 	}
 
+	/**
+	 * Méthode booléene Supprimer
+	 * @param BufferReader reception
+	 * On recoit un message qui correspond à l'identifiant d'une tache
+	 * On supprime directement, à partir de la méthode de arrayList, la tâche 
+	 * correspondant à l'identifiant envoyé
+	 * @return vrai si tout c'est bien passé, faux sinon
+	 */
 	private boolean supprimer(BufferedReader reception)	{
 		int id;
 		

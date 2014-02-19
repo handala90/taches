@@ -1,9 +1,32 @@
+/**
+ * Classe Client Main
+ * Permettra de recevoir et d'envoyer des messages au client
+ * Traitements faites dans la classe Client
+ */
 package client;
 
 import java.util.Scanner;
 
 class ClientMain {
 	
+	/**
+	 * Fonction main de la classe Client
+	 * @param args
+	 * 
+	 * On instancie un nouveau client
+	 * Tant que la réponse du client est vrai (Il sera faux que si celui-ci souhaite quitter le programme)
+	 * Affichage d'un message et d'une attente de réponse tant que la réponse n'est pas 1.Lister/2.Ajouter/3.Affecter/4.Terminer/5.Supprimer/6.Quitter
+	 * 
+	 * Si la réponse = 6 <-> Quitter
+	 * 		=> On passe la réponse du client à faux et on quitte le programme
+	 * 
+	 * Si la réponse = 1 <-> Lister
+	 * 		=>  Affichage d'un message et d'une attente de réponse tant que la réponse n'est pas 1.Toutes les tâches/2.Libres/3.Affectées/4.Effectuees
+	 *	
+	 * => On a donc la demande du client en fonction de ces choix que l'on envoie 
+	 *    à la méthode "envoi" du client pour traiter sa demande avant de l'envoyer au serveur
+	 * 
+	 */
 	public static void main(String[] args) {
 		
 		Client client = new Client();

@@ -11,5 +11,4 @@ do
 	echo -e "Terminer\n2\n"
 	echo -e "Lister\n"
 	echo -e "STOP\n"
-	false
 done | nc localhost 9921
