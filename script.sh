@@ -9,6 +9,6 @@ do
 	echo -e "Affecter\n1\nCyrille\n"
 	echo -e "Affecter\n0\nMathieu\n"
 	echo -e "Terminer\n2\n"
-	echo -e "Lister\n"
+	echo -e "ListerLibres\n"
 	echo -e "STOP\n"
 done | nc localhost 9921
